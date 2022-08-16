@@ -11,6 +11,7 @@ const GraphQLUpload = require("graphql-upload/GraphQLUpload.js");
 // const graphqlHTTP = require("express-graphql");
 
 const { finished } = require('stream/promises');
+const { getUser } = require("./utili/utilities");
 
 
 const app = express();
@@ -31,6 +32,24 @@ async function startServer() {
         resolvers,
         csrfPrevention: true,
         cache: 'bounded',
+
+        context: ({ req }) => {
+            let token = req.headers.authorization;
+            if (token.startsWith("Bearer")) {
+                token = token.split(" ")[1]
+                console.log(token)
+                const user = getUser(token)
+                return user;
+            }
+        },
+
+        /* formatError: (err) => {
+            console.log(err)
+            if (err.originalError instanceof AuthenticationError) {
+                return new AuthenticationError("User unauthenticated!!");
+            }
+            return err;
+        }, */
     });
     await server.start();
     // app.use(graphqlUploadExpress());

@@ -8,7 +8,7 @@ const typeDefs = gql(`
   }
 
   type User {
-    _id: ID
+    id: ID
     name: String
     email: String
     password: String
@@ -27,14 +27,22 @@ const typeDefs = gql(`
   }
 
   type AuthInfo{
-    _id: ID!
+    id: ID!
     token: String!
     expiresToken: Int!
   }
+  type ErrorMsg{
+    status: Int!
+    error: String
+    message: String
+  }
+  union GetUsers = User | ErrorMsg
 
   type Query{
+    getAllUsers: [User!]
     getUser(email: String!): User!
     signIn(email: String!, password: String!): AuthInfo!
+    # singOut(): String!
   }
   type Mutation {
     createUser(user: InputUser!): User!
